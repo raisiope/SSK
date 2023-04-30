@@ -2,7 +2,7 @@
 
 SSK (SäätöSalaojaKaivo) ohjelma on opinnäytetyön prototyypiin liittyvä toteutus.
 
-## Dokumentit
+## Info
 
 Ohjelmistokeskeinen automaatio peltojen vesitalouden hallinnassa -opinnäytetyö
 
