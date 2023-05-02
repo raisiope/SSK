@@ -41,8 +41,8 @@ fn main() -> ! {
         &mut pac.RESETS,
     );
 
-    let sda_0_pin = pins.gpio20.into_mode::<hal::gpio::FunctionI2C>();
-    let scl_0_pin = pins.gpio21.into_mode::<hal::gpio::FunctionI2C>();
+    let sda_0_pin = pins.gpio8.into_mode::<hal::gpio::FunctionI2C>();
+    let scl_0_pin = pins.gpio9.into_mode::<hal::gpio::FunctionI2C>();
 
     let mut i2c_0 = hal::I2C::i2c0(
         pac.I2C0,
@@ -53,8 +53,8 @@ fn main() -> ! {
         &clocks.system_clock,
     );
 
-    let sda_1_pin = pins.gpio18.into_mode::<hal::gpio::FunctionI2C>();
-    let scl_1_pin = pins.gpio19.into_mode::<hal::gpio::FunctionI2C>();
+    let sda_1_pin = pins.gpio10.into_mode::<hal::gpio::FunctionI2C>();
+    let scl_1_pin = pins.gpio11.into_mode::<hal::gpio::FunctionI2C>();
 
     let i2c_1 = hal::I2C::i2c1(
         pac.I2C1,
@@ -85,8 +85,8 @@ fn main() -> ! {
     let mut adc = hal::Adc::new(pac.ADC, &mut pac.RESETS);
     let mut adc_pin_0 = pins.gpio26.into_floating_input();
     let mut adc_pin_1 = pins.gpio27.into_floating_input();
-    let mut rel6_pin = pins.gpio6.into_push_pull_output();
-    let mut rel7_pin = pins.gpio7.into_push_pull_output();
+    let mut rel0_pin = pins.gpio18.into_push_pull_output();
+    let mut rel1_pin = pins.gpio19.into_push_pull_output();
 
     enum Suunta {
         Ylos,
@@ -131,21 +131,26 @@ fn main() -> ! {
 
         let mut buff = [0u8; 6];
 
+        delay.delay_ms(1_000);
+        _led_pin.set_high().unwrap();
+        delay.delay_ms(100);
+        _led_pin.set_low().unwrap();
+
         while let Ok(_byte) = uart.read_raw(&mut buff) {
-            rel7_pin.set_low().unwrap();
+            rel1_pin.set_low().unwrap();
             suunta = Suunta::Vapaa;
             if buff[0] == b'R' {
                 if buff[1] == b'0' {
                     if buff[2] == b'1' {
-                        rel6_pin.set_high().unwrap();
+                        rel0_pin.set_high().unwrap();
                     } else {
-                        rel6_pin.set_low().unwrap();
+                        rel0_pin.set_low().unwrap();
                     }
                 } else if buff[1] == b'1' {
                     if buff[2] == b'1' {
-                        rel7_pin.set_high().unwrap();
+                        rel1_pin.set_high().unwrap();
                     } else {
-                        rel7_pin.set_low().unwrap();
+                        rel1_pin.set_low().unwrap();
                     }
                 } else {
                 }
@@ -159,13 +164,13 @@ fn main() -> ! {
                 if (arvo > 0u16) & (arvo < 4000u16) {
                     tavoite_korkeus = arvo;
                     if tavoite_korkeus > pin_adc2 {
-                        rel6_pin.set_high().unwrap();
+                        rel0_pin.set_high().unwrap();
                         suunta = Suunta::Ylos;
                     } else {
-                        rel6_pin.set_low().unwrap();
+                        rel0_pin.set_low().unwrap();
                         suunta = Suunta::Alas;
                     }
-                    rel7_pin.set_high().unwrap();
+                    rel1_pin.set_high().unwrap();
                 }
             };
         }
@@ -173,13 +178,13 @@ fn main() -> ! {
         match suunta {
             Suunta::Ylos => {
                 if tavoite_korkeus < pin_adc2 {
-                    rel7_pin.set_low().unwrap();
+                    rel1_pin.set_low().unwrap();
                     suunta = Suunta::Vapaa
                 }
             }
             Suunta::Alas => {
                 if tavoite_korkeus > pin_adc2 {
-                    rel7_pin.set_low().unwrap();
+                    rel1_pin.set_low().unwrap();
                     suunta = Suunta::Vapaa
                 }
             }
