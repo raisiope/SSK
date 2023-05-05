@@ -2,18 +2,18 @@
 #![no_std]
 #![no_main]
 
-use bmp280;
-use core::fmt::Write as FmtWrite;
-use embedded_hal::adc::OneShot;
-use embedded_hal::blocking::i2c::{Read, Write};
 #[allow(unused)]
 use embedded_hal::digital::v2::OutputPin;
+use embedded_hal::adc::OneShot;
+use core::fmt::Write as FmtWrite;
+use embedded_hal::blocking::i2c::{Read, Write};
 use fugit::RateExtU32;
 use panic_halt as _;
-use rp_pico::hal;
-use rp_pico::hal::pac;
 use rp_pico::hal::prelude::*;
+use rp_pico::hal::pac;
+use rp_pico::hal;
 use rp_pico::hal::uart::{DataBits, StopBits, UartConfig};
+use bmp280;
 
 #[rp_pico::entry]
 fn main() -> ! {
